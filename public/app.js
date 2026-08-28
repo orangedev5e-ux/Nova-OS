@@ -1,9 +1,11 @@
 // ==========================================================================
 // 1. DOM ELEMENTS
 // ==========================================================================
-// Auth Elements
-const authSection = document.getElementById('auth-section');
-const appSection = document.getElementById('app-section');
+// Auth Drawer Elements
+const authModal = document.getElementById('auth-modal');
+const closeAuthBtn = document.getElementById('close-auth-btn');
+const openAuthBtn = document.getElementById('open-auth-btn');
+const headerAuthBtn = document.getElementById('header-auth-btn');
 const tabSignUp = document.getElementById('tab-signup');
 const tabLogIn = document.getElementById('tab-login');
 const formTitle = document.getElementById('form-title');
@@ -18,9 +20,8 @@ const submitBtn = document.getElementById('submit-btn');
 const btnText = document.getElementById('btn-text');
 const alertBox = document.getElementById('alert-box');
 const togglePrompt = document.getElementById('toggle-prompt');
-const toggleLink = document.getElementById('toggle-link');
 
-// App & Navigation Elements
+// Navigation & Layout Elements
 const appSidebar = document.getElementById('app-sidebar');
 const sidebarBackdrop = document.getElementById('sidebar-backdrop');
 const hamburgerBtn = document.getElementById('hamburger-btn');
@@ -31,13 +32,24 @@ const viewPanels = document.querySelectorAll('.view-panel');
 const workspaceTitle = document.getElementById('workspace-title');
 const workspaceSubtitle = document.getElementById('workspace-subtitle');
 
-// User Profile Elements
+// Profile & Dynamic Badges
+const accountBtn = document.getElementById('account-btn');
 const sidebarAvatar = document.getElementById('sidebar-avatar');
 const sidebarUsername = document.getElementById('sidebar-username');
+const sidebarRole = document.getElementById('sidebar-role');
 const heroGreeting = document.getElementById('hero-greeting');
+const heroSubtext = document.getElementById('hero-subtext');
 const modalAvatar = document.getElementById('modal-avatar');
 const modalUsername = document.getElementById('modal-username');
 const modalEmail = document.getElementById('modal-email');
+const currentTeamName = document.getElementById('current-team-name');
+
+// Stats Counters & Badges
+const statDocsCount = document.getElementById('stat-docs-count');
+const statTasksCount = document.getElementById('stat-tasks-count');
+const docsCountBadge = document.getElementById('docs-count-badge');
+const tasksCountBadge = document.getElementById('tasks-count-badge');
+const activityFeed = document.getElementById('activity-feed');
 
 // Modals
 const settingsBtn = document.getElementById('settings-btn');
@@ -47,38 +59,52 @@ const saveSettingsBtn = document.getElementById('save-settings-btn');
 const themeButtons = document.querySelectorAll('.theme-btn');
 const fontSizeSelect = document.getElementById('font-size-select');
 
-const accountBtn = document.getElementById('account-btn');
 const accountModal = document.getElementById('account-modal');
 const closeAccountBtn = document.getElementById('close-account-btn');
 const modalLogoutBtn = document.getElementById('modal-logout-btn');
+const deleteAccountBtn = document.getElementById('delete-account-btn');
 const verifyTokenBtn = document.getElementById('verify-token-btn');
 const modalApiBox = document.getElementById('modal-api-box');
 
-// Feature Interactive Elements (Chat, Docs, Tasks)
+// Interactive Feature Elements
 const chatForm = document.getElementById('chat-form');
 const chatInput = document.getElementById('chat-input');
 const chatMessagesBox = document.getElementById('chat-messages-box');
+const emptyChatState = document.getElementById('empty-chat-state');
 
 const btnAddDoc = document.getElementById('btn-add-doc');
 const docUploadPanel = document.getElementById('doc-upload-panel');
 const cancelDocBtn = document.getElementById('cancel-doc-btn');
 const newDocForm = document.getElementById('new-doc-form');
 const docsListContainer = document.getElementById('docs-list-container');
+const docsEmptyState = document.getElementById('docs-empty-state');
 
 const btnAddTask = document.getElementById('btn-add-task');
 const taskCreatePanel = document.getElementById('task-create-panel');
 const cancelTaskBtn = document.getElementById('cancel-task-btn');
 const newTaskForm = document.getElementById('new-task-form');
 const colTodo = document.getElementById('col-todo');
+const colInprog = document.getElementById('col-inprogress');
+const colDone = document.getElementById('col-done');
 const todoCount = document.getElementById('todo-count');
+const progCount = document.getElementById('prog-count');
+const doneCount = document.getElementById('done-count');
 
-// Quick Jump Buttons
+// Team Directory Elements
+const teamMyAvatar = document.getElementById('team-my-avatar');
+const teamMyName = document.getElementById('team-my-name');
+const teamMyRole = document.getElementById('team-my-role');
+
+// Quick Jump Actions
 const btnJumpChat = document.getElementById('btn-jump-chat');
 const btnJumpDocs = document.getElementById('btn-jump-docs');
 const btnJumpPlans = document.getElementById('btn-jump-plans');
 
-let currentMode = 'signup';
-let currentUser = { userName: 'Inamullah', userEmail: 'inam@gmail.com' };
+// App State
+let currentMode = 'signup'; // 'signup' or 'login'
+let currentUser = null; // null for Guest, object when logged in
+let userDocs = [];
+let userTasks = [];
 
 // ==========================================================================
 // 2. THEME & SETTINGS MANAGER
@@ -98,7 +124,6 @@ function applyFontSize(size) {
     fontSizeSelect.value = size;
 }
 
-// Initialize theme from storage or default to dark
 const savedTheme = localStorage.getItem('terraforge_theme') || 'dark';
 const savedFont = localStorage.getItem('terraforge_font') || 'normal';
 applyTheme(savedTheme);
@@ -124,14 +149,12 @@ function switchView(viewName) {
         panel.classList.toggle('active', panel.id === `view-${viewName}`);
     });
 
-    // Update Header
     const activeItem = document.querySelector(`.nav-item[data-view="${viewName}"] span:nth-child(2)`);
     if (activeItem) {
         workspaceTitle.textContent = activeItem.textContent;
         workspaceSubtitle.textContent = viewSubtitles[viewName] || 'Collaborative team workspace.';
     }
 
-    // Close mobile drawer if open
     closeMobileSidebar();
 }
 
@@ -142,7 +165,6 @@ navItems.forEach(item => {
     });
 });
 
-// Quick Jump Actions
 if (btnJumpChat) btnJumpChat.addEventListener('click', () => switchView('chat'));
 if (btnJumpDocs) btnJumpDocs.addEventListener('click', () => switchView('documents'));
 if (btnJumpPlans) btnJumpPlans.addEventListener('click', () => switchView('plans'));
@@ -164,176 +186,33 @@ hamburgerBtn.addEventListener('click', openMobileSidebar);
 closeSidebarBtn.addEventListener('click', closeMobileSidebar);
 sidebarBackdrop.addEventListener('click', closeMobileSidebar);
 
-// Quick Theme Button in Header
 quickThemeBtn.addEventListener('click', () => {
     const current = document.documentElement.getAttribute('data-theme') || 'dark';
     applyTheme(current === 'dark' ? 'light' : 'dark');
 });
 
 // ==========================================================================
-// 5. INTERACTIVE FEATURES: CHAT, DOCS, TASKS
+// 5. AUTH POPUP DRAWER & USER SESSION MANAGEMENT
 // ==========================================================================
-
-// --- A. Real-Time Chat Simulation ---
-chatForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const text = chatInput.value.trim();
-    if (!text) return;
-
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const initial = (currentUser.userName || 'U')[0].toUpperCase();
-
-    const msgGroup = document.createElement('div');
-    msgGroup.className = 'message-group outgoing';
-    msgGroup.innerHTML = `
-        <div class="msg-avatar">${initial}</div>
-        <div class="msg-content">
-            <div class="msg-meta">
-                <span class="msg-sender">${currentUser.userName || 'You'}</span>
-                <span class="msg-timestamp">${time}</span>
-            </div>
-            <div class="msg-bubble">${text}</div>
-        </div>
-    `;
-
-    chatMessagesBox.appendChild(msgGroup);
-    chatInput.value = '';
-    chatMessagesBox.scrollTop = chatMessagesBox.scrollHeight;
-});
-
-// --- B. Document Sharing ---
-btnAddDoc.addEventListener('click', () => {
-    docUploadPanel.style.display = docUploadPanel.style.display === 'none' ? 'block' : 'none';
-});
-
-cancelDocBtn.addEventListener('click', () => {
-    docUploadPanel.style.display = 'none';
-});
-
-newDocForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const title = document.getElementById('doc-title-input').value;
-    const desc = document.getElementById('doc-desc-input').value;
-    const category = document.getElementById('doc-category-select').value;
-
-    const newCard = document.createElement('div');
-    newCard.className = 'doc-card';
-    newCard.innerHTML = `
-        <div class="doc-badge">${category}</div>
-        <h4>${title}</h4>
-        <p>${desc}</p>
-        <div class="doc-footer">
-            <span>Uploaded by ${currentUser.userName || 'Inamullah'}</span>
-            <button class="doc-view-btn">Inspect</button>
-        </div>
-    `;
-
-    docsListContainer.prepend(newCard);
-    newDocForm.reset();
-    docUploadPanel.style.display = 'none';
-});
-
-// --- C. Task Creation ---
-btnAddTask.addEventListener('click', () => {
-    taskCreatePanel.style.display = taskCreatePanel.style.display === 'none' ? 'block' : 'none';
-});
-
-cancelTaskBtn.addEventListener('click', () => {
-    taskCreatePanel.style.display = 'none';
-});
-
-newTaskForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const title = document.getElementById('task-title-input').value;
-    const assignee = document.getElementById('task-assignee-input').value;
-    const priority = document.getElementById('task-priority-select').value;
-
-    const tagClass = priority === 'High' ? 'high' : priority === 'Medium' ? 'medium' : 'done-tag';
-
-    const taskCard = document.createElement('div');
-    taskCard.className = 'task-card';
-    taskCard.innerHTML = `
-        <span class="tag ${tagClass}">${priority}</span>
-        <h4>${title}</h4>
-        <p>Assigned team task in active sprint backlog.</p>
-        <div class="task-meta">👤 ${assignee}</div>
-    `;
-
-    colTodo.prepend(taskCard);
-    todoCount.textContent = colTodo.children.length;
-    newTaskForm.reset();
-    taskCreatePanel.style.display = 'none';
-});
-
-// ==========================================================================
-// 6. MODALS LOGIC (SETTINGS & ACCOUNT)
-// ==========================================================================
-// Settings Modal
-settingsBtn.addEventListener('click', () => {
-    settingsModal.style.display = 'flex';
+function openAuthModal(mode = 'signup') {
+    setMode(mode);
+    authModal.style.display = 'flex';
     closeMobileSidebar();
+}
+
+function closeAuthModal() {
+    authModal.style.display = 'none';
+    hideAlert();
+}
+
+if (openAuthBtn) openAuthBtn.addEventListener('click', () => openAuthModal('signup'));
+if (headerAuthBtn) headerAuthBtn.addEventListener('click', () => openAuthModal('login'));
+if (closeAuthBtn) closeAuthBtn.addEventListener('click', closeAuthModal);
+
+authModal.addEventListener('click', (e) => {
+    if (e.target === authModal) closeAuthModal();
 });
 
-closeSettingsBtn.addEventListener('click', () => {
-    settingsModal.style.display = 'none';
-});
-
-themeButtons.forEach(btn => {
-    btn.addEventListener('click', () => applyTheme(btn.dataset.themeVal));
-});
-
-fontSizeSelect.addEventListener('change', (e) => applyFontSize(e.target.value));
-
-saveSettingsBtn.addEventListener('click', () => {
-    settingsModal.style.display = 'none';
-});
-
-// Account Modal
-accountBtn.addEventListener('click', () => {
-    accountModal.style.display = 'flex';
-    modalApiBox.style.display = 'none';
-    closeMobileSidebar();
-});
-
-closeAccountBtn.addEventListener('click', () => {
-    accountModal.style.display = 'none';
-});
-
-window.addEventListener('click', (e) => {
-    if (e.target === settingsModal) settingsModal.style.display = 'none';
-    if (e.target === accountModal) accountModal.style.display = 'none';
-});
-
-// Verify Token With Backend
-verifyTokenBtn.addEventListener('click', async () => {
-    const token = localStorage.getItem('authToken');
-    if (!token) return;
-
-    try {
-        modalApiBox.style.display = 'block';
-        modalApiBox.textContent = 'Verifying token with /api/profile...';
-
-        const response = await fetch('/api/profile', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        const data = await response.json();
-        modalApiBox.textContent = JSON.stringify(data, null, 2);
-    } catch (err) {
-        modalApiBox.textContent = `Error: ${err.message}`;
-    }
-});
-
-// Log Out
-modalLogoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('authToken');
-    passwordInput.value = '';
-    showAuth();
-});
-
-// ==========================================================================
-// 7. AUTHENTICATION & LOGIN FLOW
-// ==========================================================================
 function showAlert(message, type = 'error') {
     alertBox.textContent = message;
     alertBox.className = `alert-box ${type}`;
@@ -352,18 +231,18 @@ function setMode(mode) {
         tabSignUp.classList.add('active');
         tabLogIn.classList.remove('active');
         formTitle.textContent = 'Join Your Team';
-        formSubtitle.textContent = 'Access collaborative chats, documents, and project plans';
+        formSubtitle.textContent = 'Create an account to save custom docs, tasks, and chats';
         nameGroup.style.display = 'block';
         nameInput.required = true;
         emailLabel.textContent = 'Email Address';
         emailInput.placeholder = 'name@example.com';
-        btnText.textContent = 'Create Team Account';
+        btnText.textContent = 'Create Account';
         togglePrompt.innerHTML = `Already on the team? <a href="#" id="toggle-link">Log In here</a>`;
     } else {
         tabLogIn.classList.add('active');
         tabSignUp.classList.remove('active');
         formTitle.textContent = 'Team Sign In';
-        formSubtitle.textContent = 'Enter your credentials to enter the workspace';
+        formSubtitle.textContent = 'Enter your credentials to enter your workspace';
         nameGroup.style.display = 'none';
         nameInput.required = false;
         emailLabel.textContent = 'Username or Email';
@@ -380,35 +259,67 @@ function setMode(mode) {
 
 tabSignUp.addEventListener('click', () => setMode('signup'));
 tabLogIn.addEventListener('click', () => setMode('login'));
-toggleLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    setMode('login');
-});
 
-function populateUserData(user) {
-    currentUser = user;
-    const displayName = user.userName || 'Developer';
-    const initial = displayName.charAt(0).toUpperCase();
+// Update UI depending on Guest vs Logged In state
+function renderUserState() {
+    if (currentUser) {
+        // Logged In User
+        const displayName = currentUser.userName || 'Team Member';
+        const initial = displayName.charAt(0).toUpperCase();
 
-    sidebarAvatar.textContent = initial;
-    sidebarUsername.textContent = displayName;
-    heroGreeting.textContent = `Welcome back, ${displayName}! 👋`;
+        if (openAuthBtn) openAuthBtn.style.display = 'none';
+        if (headerAuthBtn) headerAuthBtn.style.display = 'none';
+        if (accountBtn) accountBtn.style.display = 'flex';
 
-    modalAvatar.textContent = initial;
-    modalUsername.textContent = displayName;
-    modalEmail.textContent = user.userEmail || 'team@terraforge.io';
+        sidebarAvatar.textContent = initial;
+        sidebarUsername.textContent = displayName;
+        sidebarRole.textContent = 'Team Member • Online';
+        currentTeamName.textContent = `${displayName}'s Workspace`;
+
+        heroGreeting.textContent = `Welcome back, ${displayName}! 👋`;
+        heroSubtext.textContent = `Here is your personal team operations hub. Add your documents, sprint tasks, and discussions below.`;
+
+        modalAvatar.textContent = initial;
+        modalUsername.textContent = displayName;
+        modalEmail.textContent = currentUser.userEmail || 'user@example.com';
+
+        teamMyAvatar.textContent = initial;
+        teamMyName.textContent = displayName;
+        teamMyRole.textContent = 'Active Contributor & Lead';
+
+    } else {
+        // Guest / Visitor
+        if (openAuthBtn) openAuthBtn.style.display = 'flex';
+        if (headerAuthBtn) headerAuthBtn.style.display = 'inline-block';
+        if (accountBtn) accountBtn.style.display = 'none';
+
+        currentTeamName.textContent = `Public Workspace`;
+        heroGreeting.textContent = `Welcome to TerraForge! 👋`;
+        heroSubtext.textContent = `Explore the collaborative hub. Sign in or create an account on the left to save your own team docs and sprint tasks.`;
+
+        teamMyAvatar.textContent = 'G';
+        teamMyName.textContent = 'Guest Visitor';
+        teamMyRole.textContent = 'Public Observer';
+    }
+
+    updateStatsAndBadges();
 }
 
-function showApp(user) {
-    populateUserData(user);
-    authSection.style.display = 'none';
-    appSection.style.display = 'flex';
-}
+function updateStatsAndBadges() {
+    const docCount = userDocs.length;
+    const taskCount = userTasks.length;
 
-function showAuth() {
-    appSection.style.display = 'none';
-    authSection.style.display = 'flex';
-    accountModal.style.display = 'none';
+    statDocsCount.textContent = docCount;
+    statTasksCount.textContent = taskCount;
+    docsCountBadge.textContent = docCount;
+    tasksCountBadge.textContent = taskCount;
+
+    // Toggle Empty State for Docs
+    if (docCount === 0) {
+        docsEmptyState.style.display = 'block';
+    } else {
+        docsEmptyState.style.display = 'none';
+    }
 }
 
 // Form Submit Handler
@@ -452,22 +363,277 @@ document.getElementById('auth-form').addEventListener('submit', async (e) => {
             if (!response.ok) throw new Error(data.error || 'Failed to log in');
 
             localStorage.setItem('authToken', data.token);
-            showAlert('Login successful!', 'success');
+            currentUser = data.user;
+            
+            // Clean empty state for new user
+            userDocs = [];
+            userTasks = [];
+            renderDocs();
+            renderTasks();
+
+            showAlert('Login successful! Entering workspace...', 'success');
 
             setTimeout(() => {
-                showApp(data.user);
-            }, 500);
+                closeAuthModal();
+                renderUserState();
+            }, 600);
         }
     } catch (err) {
         showAlert(err.message, 'error');
     } finally {
         submitBtn.disabled = false;
-        btnText.textContent = currentMode === 'signup' ? 'Create Team Account' : 'Enter Workspace';
+        btnText.textContent = currentMode === 'signup' ? 'Create Account' : 'Enter Workspace';
     }
 });
 
-// Auto Check Token on Page Load
+// ==========================================================================
+// 6. INTERACTIVE CHAT, DOCUMENTS & KANBAN TASKS
+// ==========================================================================
+
+// --- A. Real-Time Chat ---
+chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    if (emptyChatState) emptyChatState.style.display = 'none';
+
+    const senderName = currentUser ? currentUser.userName : 'Guest Visitor';
+    const initial = senderName.charAt(0).toUpperCase();
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const msgGroup = document.createElement('div');
+    msgGroup.className = 'message-group outgoing';
+    msgGroup.innerHTML = `
+        <div class="msg-avatar">${initial}</div>
+        <div class="msg-content">
+            <div class="msg-meta">
+                <span class="msg-sender">${senderName}</span>
+                <span class="msg-timestamp">${time}</span>
+            </div>
+            <div class="msg-bubble">${text}</div>
+        </div>
+    `;
+
+    chatMessagesBox.appendChild(msgGroup);
+    chatInput.value = '';
+    chatMessagesBox.scrollTop = chatMessagesBox.scrollHeight;
+});
+
+// --- B. Document Sharing ---
+btnAddDoc.addEventListener('click', () => {
+    docUploadPanel.style.display = docUploadPanel.style.display === 'none' ? 'block' : 'none';
+});
+
+cancelDocBtn.addEventListener('click', () => {
+    docUploadPanel.style.display = 'none';
+});
+
+function renderDocs() {
+    docsListContainer.innerHTML = '';
+    userDocs.forEach((doc, index) => {
+        const card = document.createElement('div');
+        card.className = 'doc-card';
+        card.innerHTML = `
+            <div class="doc-badge">${doc.category}</div>
+            <h4>${doc.title}</h4>
+            <p>${doc.desc}</p>
+            <div class="doc-footer">
+                <span>By ${doc.author}</span>
+                <button class="doc-view-btn" onclick="removeDoc(${index})">Remove</button>
+            </div>
+        `;
+        docsListContainer.appendChild(card);
+    });
+    updateStatsAndBadges();
+}
+
+window.removeDoc = function(index) {
+    userDocs.splice(index, 1);
+    renderDocs();
+};
+
+newDocForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = document.getElementById('doc-title-input').value;
+    const desc = document.getElementById('doc-desc-input').value;
+    const category = document.getElementById('doc-category-select').value;
+    const author = currentUser ? currentUser.userName : 'Guest';
+
+    userDocs.unshift({ title, desc, category, author });
+    renderDocs();
+    newDocForm.reset();
+    docUploadPanel.style.display = 'none';
+});
+
+// --- C. Task / Kanban Management ---
+btnAddTask.addEventListener('click', () => {
+    taskCreatePanel.style.display = taskCreatePanel.style.display === 'none' ? 'block' : 'none';
+});
+
+cancelTaskBtn.addEventListener('click', () => {
+    taskCreatePanel.style.display = 'none';
+});
+
+function renderTasks() {
+    colTodo.innerHTML = '';
+    colInprog.innerHTML = '';
+    colDone.innerHTML = '';
+
+    userTasks.forEach((task, index) => {
+        const tagClass = task.priority === 'High' ? 'high' : task.priority === 'Medium' ? 'medium' : 'done-tag';
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.innerHTML = `
+            <span class="tag ${tagClass}">${task.priority}</span>
+            <h4>${task.title}</h4>
+            <div class="task-meta">👤 ${task.assignee}</div>
+        `;
+
+        if (task.status === 'done') {
+            card.classList.add('done-card');
+            colDone.appendChild(card);
+        } else if (task.status === 'inprogress') {
+            colInprog.appendChild(card);
+        } else {
+            colTodo.appendChild(card);
+        }
+    });
+
+    todoCount.textContent = colTodo.children.length;
+    progCount.textContent = colInprog.children.length;
+    doneCount.textContent = colDone.children.length;
+    updateStatsAndBadges();
+}
+
+newTaskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = document.getElementById('task-title-input').value;
+    const assignee = document.getElementById('task-assignee-input').value;
+    const priority = document.getElementById('task-priority-select').value;
+
+    userTasks.unshift({ title, assignee, priority, status: 'todo' });
+    renderTasks();
+    newTaskForm.reset();
+    taskCreatePanel.style.display = 'none';
+});
+
+// ==========================================================================
+// 7. SETTINGS & ACCOUNT MODALS + DELETE ACCOUNT
+// ==========================================================================
+settingsBtn.addEventListener('click', () => {
+    settingsModal.style.display = 'flex';
+    closeMobileSidebar();
+});
+
+closeSettingsBtn.addEventListener('click', () => {
+    settingsModal.style.display = 'none';
+});
+
+themeButtons.forEach(btn => {
+    btn.addEventListener('click', () => applyTheme(btn.dataset.themeVal));
+});
+
+fontSizeSelect.addEventListener('change', (e) => applyFontSize(e.target.value));
+
+saveSettingsBtn.addEventListener('click', () => {
+    settingsModal.style.display = 'none';
+});
+
+// Account Profile Modal
+accountBtn.addEventListener('click', () => {
+    accountModal.style.display = 'flex';
+    modalApiBox.style.display = 'none';
+    closeMobileSidebar();
+});
+
+closeAccountBtn.addEventListener('click', () => {
+    accountModal.style.display = 'none';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === settingsModal) settingsModal.style.display = 'none';
+    if (e.target === accountModal) accountModal.style.display = 'none';
+});
+
+// Verify Token With Backend
+verifyTokenBtn.addEventListener('click', async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) return;
+
+    try {
+        modalApiBox.style.display = 'block';
+        modalApiBox.textContent = 'Verifying token with /api/profile...';
+
+        const response = await fetch('/api/profile', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+        modalApiBox.textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+        modalApiBox.textContent = `Error: ${err.message}`;
+    }
+});
+
+// Log Out Action
+modalLogoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('authToken');
+    currentUser = null;
+    userDocs = [];
+    userTasks = [];
+    renderDocs();
+    renderTasks();
+    accountModal.style.display = 'none';
+    renderUserState();
+});
+
+// DELETE ACCOUNT ACTION (Permanent MongoDB Removal)
+deleteAccountBtn.addEventListener('click', async () => {
+    const confirmDelete = confirm("⚠️ Are you sure you want to permanently delete your account? All your profile data will be erased from MongoDB Atlas. This cannot be undone.");
+    if (!confirmDelete) return;
+
+    const token = localStorage.getItem('authToken');
+    if (!token) return;
+
+    try {
+        deleteAccountBtn.textContent = 'Deleting Account...';
+        deleteAccountBtn.disabled = true;
+
+        const response = await fetch('/api/account', {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to delete account');
+
+        alert('Your account has been deleted permanently.');
+        localStorage.removeItem('authToken');
+        currentUser = null;
+        userDocs = [];
+        userTasks = [];
+        renderDocs();
+        renderTasks();
+        accountModal.style.display = 'none';
+        renderUserState();
+
+    } catch (err) {
+        alert(`Error deleting account: ${err.message}`);
+    } finally {
+        deleteAccountBtn.textContent = '🗑️ Delete Account Permanently';
+        deleteAccountBtn.disabled = false;
+    }
+});
+
+// ==========================================================================
+// 8. AUTO-INITIALIZE ON PAGE LOAD
+// ==========================================================================
 window.addEventListener('DOMContentLoaded', async () => {
+    renderUserState();
+    renderDocs();
+    renderTasks();
+
     const token = localStorage.getItem('authToken');
     if (token) {
         try {
@@ -476,15 +642,21 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                showApp(data.user);
+                currentUser = data.user;
+                renderUserState();
             } else {
                 localStorage.removeItem('authToken');
+                currentUser = null;
+                renderUserState();
             }
         } catch {
             localStorage.removeItem('authToken');
+            currentUser = null;
+            renderUserState();
         }
     }
 });
+
 
 
 

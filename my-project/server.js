@@ -147,10 +147,29 @@ async function startServer() {
       }
     });
 
+    // 4. DELETE ACCOUNT ROUTE (Protected - Removes user from MongoDB)
+    app.delete('/api/account', authMiddleware, async (req, res) => {
+      try {
+        const result = await usersCollection.deleteOne({ _id: new ObjectId(req.user.userId) });
+        if (result.deletedCount === 0) {
+          return res.status(404).json({ error: "User account not found or already deleted." });
+        }
+        console.log(`Account deleted: ID ${req.user.userId}`);
+        res.json({
+          success: true,
+          message: "Account deleted permanently."
+        });
+      } catch (error) {
+        console.error("Delete account error:", error.message);
+        res.status(500).json({ error: error.message });
+      }
+    });
+
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`Open in browser: http://localhost:${PORT}`);
     });
+
 
   } catch (error) {
     console.error("Failed to start server:", error);

@@ -11,14 +11,16 @@
 </head>
 <body>
 
-    <!-- 1. AUTHENTICATION SECTION (Logged Out State) -->
-    <div class="auth-wrapper" id="auth-section">
-        <div class="auth-card">
-            <div class="brand-header">
-                <div class="brand-badge">⚡ TerraForge Hub</div>
-                <h1 id="form-title">Join Your Team</h1>
-                <p id="form-subtitle">Access collaborative chats, documents, and project plans</p>
+    <!-- 1. LEFT-SIDE SLIDE-IN / POPUP AUTH MODAL (Not blocking main UI) -->
+    <div class="auth-modal-overlay" id="auth-modal" style="display: none;">
+        <div class="auth-drawer-card">
+            <div class="drawer-header">
+                <div class="brand-badge">⚡ TerraForge Auth</div>
+                <button class="close-modal-btn" id="close-auth-btn">✕</button>
             </div>
+            
+            <h2 id="form-title">Join Your Team</h2>
+            <p id="form-subtitle">Create an account or sign in to sync your team data.</p>
 
             <!-- TAB SWITCHER -->
             <div class="tabs">
@@ -26,7 +28,7 @@
                 <button type="button" class="tab-btn" id="tab-login">Log In</button>
             </div>
 
-            <!-- NOTIFICATION / ERROR BOX -->
+            <!-- ALERT / ERROR BOX -->
             <div class="alert-box" id="alert-box" style="display: none;"></div>
 
             <form id="auth-form" autocomplete="off">
@@ -50,7 +52,7 @@
 
                 <!-- SUBMIT BUTTON -->
                 <button type="submit" class="submit-btn" id="submit-btn">
-                    <span id="btn-text">Create Team Account</span>
+                    <span id="btn-text">Create Account</span>
                 </button>
             </form>
 
@@ -60,8 +62,8 @@
         </div>
     </div>
 
-    <!-- 2. MAIN APPLICATION LAYOUT (Logged In State) -->
-    <div class="app-container" id="app-section" style="display: none;">
+    <!-- 2. MAIN APPLICATION WORKSPACE (Accessible Directly by Everyone) -->
+    <div class="app-container" id="app-section">
         
         <!-- MOBILE OVERLAY BACKDROP -->
         <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
@@ -81,12 +83,12 @@
             <!-- Team / Project Quick Selector -->
             <div class="team-badge-pill">
                 <span class="team-indicator"></span>
-                <span class="team-name" id="current-team-name">Project Titan Core</span>
+                <span class="team-name" id="current-team-name">Workspace Portal</span>
             </div>
 
             <!-- Navigation Links -->
             <nav class="sidebar-nav">
-                <div class="nav-category">TEAM COLLABORATION</div>
+                <div class="nav-category">WORKSPACE MODULES</div>
                 
                 <a href="#" class="nav-item active" data-view="dashboard">
                     <span class="nav-icon">📊</span>
@@ -102,32 +104,40 @@
                 <a href="#" class="nav-item" data-view="documents">
                     <span class="nav-icon">📁</span>
                     <span>Documents & Files</span>
+                    <span class="nav-badge" id="docs-count-badge">0</span>
                 </a>
 
                 <a href="#" class="nav-item" data-view="plans">
                     <span class="nav-icon">📋</span>
                     <span>Project Plans & Tasks</span>
+                    <span class="nav-badge" id="tasks-count-badge">0</span>
                 </a>
 
                 <a href="#" class="nav-item" data-view="team">
                     <span class="nav-icon">👥</span>
                     <span>Team Members</span>
-                    <span class="nav-badge" id="online-count">5 Active</span>
                 </a>
             </nav>
 
-            <!-- Bottom Actions (Settings & Account) -->
+            <!-- Bottom Actions (Settings & Dynamic Account / Sign In) -->
             <div class="sidebar-footer">
                 <button class="footer-btn" id="settings-btn">
                     <span class="nav-icon">⚙️</span>
                     <span>Settings & Display</span>
                 </button>
 
-                <div class="account-pill" id="account-btn">
-                    <div class="avatar-small" id="sidebar-avatar">I</div>
+                <!-- 1. GUEST MODE BUTTON (Shown when NOT logged in) -->
+                <button class="login-prompt-btn" id="open-auth-btn">
+                    <span class="nav-icon">🔑</span>
+                    <span>Sign In / Create Account</span>
+                </button>
+
+                <!-- 2. LOGGED-IN USER PILL (Shown when logged in) -->
+                <div class="account-pill" id="account-btn" style="display: none;">
+                    <div class="avatar-small" id="sidebar-avatar">G</div>
                     <div class="account-details">
-                        <span class="account-name" id="sidebar-username">Inamullah</span>
-                        <span class="account-status" id="sidebar-role">Team Lead • Online</span>
+                        <span class="account-name" id="sidebar-username">Guest User</span>
+                        <span class="account-status" id="sidebar-role">Online</span>
                     </div>
                     <span class="chevron">›</span>
                 </div>
@@ -136,7 +146,7 @@
 
         <!-- RIGHT MAIN WORKSPACE -->
         <main class="workspace">
-            <!-- Top App Bar (Responsive Header) -->
+            <!-- Top App Bar -->
             <header class="workspace-header">
                 <div class="header-left">
                     <button class="hamburger-btn" id="hamburger-btn" aria-label="Open Menu">☰</button>
@@ -147,11 +157,11 @@
                 </div>
 
                 <div class="header-right">
-                    <!-- Quick Theme Toggle -->
                     <button class="theme-toggle-btn" id="quick-theme-btn" title="Toggle Dark/Light Mode">🌙</button>
+                    <button class="header-auth-btn" id="header-auth-btn">🔑 Sign In</button>
                     <div class="live-pill">
                         <span class="pulse-dot"></span>
-                        <span class="hide-mobile">MongoDB Atlas Connected</span>
+                        <span class="hide-mobile">MongoDB Atlas Live</span>
                         <span class="show-mobile">Online</span>
                     </div>
                 </div>
@@ -164,17 +174,17 @@
                 <section class="view-panel active" id="view-dashboard">
                     <div class="welcome-banner">
                         <div class="banner-text">
-                            <h2 id="hero-greeting">Welcome back, Inamullah! 👋</h2>
-                            <p>Here is what your team is working on today across chat channels, documents, and project roadmaps.</p>
+                            <h2 id="hero-greeting">Welcome to TerraForge! 👋</h2>
+                            <p id="hero-subtext">Sign in to start organizing your team discussions, custom documents, and sprint milestones.</p>
                         </div>
                         <div class="banner-quick-stats">
                             <div class="q-stat">
-                                <span class="q-val">12</span>
-                                <span class="q-label">Docs Shared</span>
+                                <span class="q-val" id="stat-docs-count">0</span>
+                                <span class="q-label">My Documents</span>
                             </div>
                             <div class="q-stat">
-                                <span class="q-val">8</span>
-                                <span class="q-label">Active Tasks</span>
+                                <span class="q-val" id="stat-tasks-count">0</span>
+                                <span class="q-label">My Tasks</span>
                             </div>
                         </div>
                     </div>
@@ -184,53 +194,35 @@
                         <button class="action-card-btn" id="btn-jump-chat">
                             <span class="act-icon">💬</span>
                             <div>
-                                <strong>Start Team Discussion</strong>
+                                <strong>Team Discussions</strong>
                                 <p>Send messages & announcements</p>
                             </div>
                         </button>
                         <button class="action-card-btn" id="btn-jump-docs">
                             <span class="act-icon">📄</span>
                             <div>
-                                <strong>Upload Document</strong>
-                                <p>Share research, PDFs, and notes</p>
+                                <strong>Documents Repository</strong>
+                                <p>Manage notes, PDFs, and data logs</p>
                             </div>
                         </button>
                         <button class="action-card-btn" id="btn-jump-plans">
                             <span class="act-icon">🚀</span>
                             <div>
-                                <strong>Manage Tasks</strong>
-                                <p>Update sprint & project goals</p>
+                                <strong>Sprint Tasks & Board</strong>
+                                <p>Track project progress</p>
                             </div>
                         </button>
                     </div>
 
-                    <!-- Recent Activity Feed -->
+                    <!-- Clean Activity Feed -->
                     <div class="panel-card">
                         <div class="card-header">
                             <h3>🔥 Team Activity Stream</h3>
-                            <span class="badge-blue">Live Feed</span>
+                            <span class="badge-blue">Live Status</span>
                         </div>
                         <div class="activity-list" id="activity-feed">
-                            <div class="activity-item">
-                                <div class="act-avatar">U</div>
-                                <div class="act-details">
-                                    <p><strong>Umer</strong> uploaded <span class="highlight">Lithology_Report_v2.pdf</span></p>
-                                    <span class="act-time">10 mins ago</span>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="act-avatar">M</div>
-                                <div class="act-details">
-                                    <p><strong>Muhammad</strong> completed task <span class="highlight">Coordinate Survey Map</span></p>
-                                    <span class="act-time">45 mins ago</span>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="act-avatar">I</div>
-                                <div class="act-details">
-                                    <p><strong>Inamullah</strong> created the team project roadmap</p>
-                                    <span class="act-time">2 hours ago</span>
-                                </div>
+                            <div class="empty-state-notice" id="activity-empty-notice">
+                                <p>👋 Welcome! Your live workspace is initialized and ready. Create your first document or task to see activity updates here.</p>
                             </div>
                         </div>
                     </div>
@@ -242,33 +234,16 @@
                         <div class="chat-header">
                             <div class="chat-channel-info">
                                 <h3># general-discussion</h3>
-                                <p>Public channel for all team announcements, brainstorming, and updates</p>
+                                <p>Public channel for team communications and live discussions</p>
                             </div>
-                            <div class="channel-members">👥 5 Members</div>
+                            <div class="channel-members" id="chat-members-count">👥 Active Channel</div>
                         </div>
 
                         <!-- Chat Messages Stream -->
                         <div class="chat-messages" id="chat-messages-box">
-                            <div class="message-group incoming">
-                                <div class="msg-avatar">U</div>
-                                <div class="msg-content">
-                                    <div class="msg-meta">
-                                        <span class="msg-sender">Umer</span>
-                                        <span class="msg-timestamp">10:15 AM</span>
-                                    </div>
-                                    <div class="msg-bubble">Hey team! I have uploaded the preliminary geological survey files to the Documents section. Please check them out!</div>
-                                </div>
-                            </div>
-
-                            <div class="message-group incoming">
-                                <div class="msg-avatar">M</div>
-                                <div class="msg-content">
-                                    <div class="msg-meta">
-                                        <span class="msg-sender">Muhammad</span>
-                                        <span class="msg-timestamp">10:22 AM</span>
-                                    </div>
-                                    <div class="msg-bubble">Awesome, reviewing now. Also working on the field coordinate dataset today.</div>
-                                </div>
+                            <div class="empty-chat-state" id="empty-chat-state">
+                                <span>💬</span>
+                                <p>No messages yet in this channel. Send the first message below!</p>
                             </div>
                         </div>
 
@@ -280,12 +255,12 @@
                     </div>
                 </section>
 
-                <!-- VIEW 3: DOCUMENTS & FILES -->
+                <!-- VIEW 3: DOCUMENTS & FILES (Clean Null State for New Users) -->
                 <section class="view-panel" id="view-documents">
                     <div class="panel-header-actions">
                         <div>
-                            <h2>📁 Team Document Repository</h2>
-                            <p>Share, organize, and inspect project documents, reports, and geological datasets.</p>
+                            <h2>📁 Document Repository</h2>
+                            <p>Share, organize, and inspect project documents, reports, and notes.</p>
                         </div>
                         <button class="primary-btn" id="btn-add-doc">➕ New Document</button>
                     </div>
@@ -294,7 +269,7 @@
                     <div class="doc-upload-box" id="doc-upload-panel" style="display: none;">
                         <h3>Add New Shared Document</h3>
                         <form id="new-doc-form">
-                            <input type="text" id="doc-title-input" placeholder="Document Title (e.g. Field Analysis v1)" required>
+                            <input type="text" id="doc-title-input" placeholder="Document Title (e.g. Geological Survey v1)" required>
                             <textarea id="doc-desc-input" placeholder="Brief summary / notes..." rows="3" required></textarea>
                             <div class="form-row">
                                 <select id="doc-category-select">
@@ -311,39 +286,16 @@
 
                     <!-- Documents Grid -->
                     <div class="docs-grid" id="docs-list-container">
-                        <div class="doc-card">
-                            <div class="doc-badge">Geology</div>
-                            <h4>Lithology & Formation Profile.pdf</h4>
-                            <p>Detailed stratigraphic breakdown and mineral distribution notes for the upcoming field study.</p>
-                            <div class="doc-footer">
-                                <span>Uploaded by Inamullah</span>
-                                <button class="doc-view-btn">Inspect</button>
-                            </div>
-                        </div>
-
-                        <div class="doc-card">
-                            <div class="doc-badge">Architecture</div>
-                            <h4>TerraForge_System_Architecture.md</h4>
-                            <p>Full stack specifications covering MongoDB collections, FastAPI endpoints, and JWT security.</p>
-                            <div class="doc-footer">
-                                <span>Uploaded by Lead Dev</span>
-                                <button class="doc-view-btn">Inspect</button>
-                            </div>
-                        </div>
-
-                        <div class="doc-card">
-                            <div class="doc-badge">Planning</div>
-                            <h4>Sprint_Milestones_Q3.pdf</h4>
-                            <p>Core development milestones, testing schedules, and deployment checklist for the team.</p>
-                            <div class="doc-footer">
-                                <span>Uploaded by Umer</span>
-                                <button class="doc-view-btn">Inspect</button>
-                            </div>
-                        </div>
+                        <!-- Dynamic Docs Rendered Here -->
+                    </div>
+                    <div class="empty-box-placeholder" id="docs-empty-state">
+                        <div class="empty-icon">📄</div>
+                        <h3>No documents created yet</h3>
+                        <p>Click <strong>"➕ New Document"</strong> above to store your first project file or research notes.</p>
                     </div>
                 </section>
 
-                <!-- VIEW 4: PROJECT PLANS & TASKS -->
+                <!-- VIEW 4: PROJECT PLANS & TASKS (Clean Null State for New Users) -->
                 <section class="view-panel" id="view-plans">
                     <div class="panel-header-actions">
                         <div>
@@ -378,21 +330,10 @@
                             <div class="col-header">
                                 <span class="col-dot todo"></span>
                                 <h3>To Do</h3>
-                                <span class="count-pill" id="todo-count">2</span>
+                                <span class="count-pill" id="todo-count">0</span>
                             </div>
                             <div class="task-list" id="col-todo">
-                                <div class="task-card">
-                                    <span class="tag high">High</span>
-                                    <h4>Design Mobile Navigation Drawer</h4>
-                                    <p>Ensure seamless experience on all smartphones.</p>
-                                    <div class="task-meta">👤 Inamullah</div>
-                                </div>
-                                <div class="task-card">
-                                    <span class="tag medium">Medium</span>
-                                    <h4>Satellite Imagery Integration</h4>
-                                    <p>Connect Leaflet map to raster elevation tiles.</p>
-                                    <div class="task-meta">👤 Umer</div>
-                                </div>
+                                <!-- Dynamically added tasks -->
                             </div>
                         </div>
 
@@ -401,21 +342,10 @@
                             <div class="col-header">
                                 <span class="col-dot inprogress"></span>
                                 <h3>In Progress</h3>
-                                <span class="count-pill" id="prog-count">2</span>
+                                <span class="count-pill" id="prog-count">0</span>
                             </div>
                             <div class="task-list" id="col-inprogress">
-                                <div class="task-card">
-                                    <span class="tag high">High</span>
-                                    <h4>JWT Auth & Middleware</h4>
-                                    <p>Securing Express endpoints with Bearer verification.</p>
-                                    <div class="task-meta">👤 Completed ✅</div>
-                                </div>
-                                <div class="task-card">
-                                    <span class="tag medium">Medium</span>
-                                    <h4>Team Real-time Chat Engine</h4>
-                                    <p>Building persistent team message stream.</p>
-                                    <div class="task-meta">👤 Muhammad</div>
-                                </div>
+                                <!-- Dynamically added tasks -->
                             </div>
                         </div>
 
@@ -424,21 +354,10 @@
                             <div class="col-header">
                                 <span class="col-dot done"></span>
                                 <h3>Completed</h3>
-                                <span class="count-pill" id="done-count">2</span>
+                                <span class="count-pill" id="done-count">0</span>
                             </div>
                             <div class="task-list" id="col-done">
-                                <div class="task-card done-card">
-                                    <span class="tag done-tag">Done</span>
-                                    <h4>MongoDB Atlas Live Connection</h4>
-                                    <p>Database cluster active and accessible.</p>
-                                    <div class="task-meta">👤 Inamullah</div>
-                                </div>
-                                <div class="task-card done-card">
-                                    <span class="tag done-tag">Done</span>
-                                    <h4>bcrypt Password Hashing</h4>
-                                    <p>Encrypted user credentials safely stored.</p>
-                                    <div class="task-meta">👤 Inamullah</div>
-                                </div>
+                                <!-- Dynamically added tasks -->
                             </div>
                         </div>
                     </div>
@@ -448,38 +367,17 @@
                 <section class="view-panel" id="view-team">
                     <div class="panel-header-actions">
                         <div>
-                            <h2>👥 Team Directory & Roster</h2>
-                            <p>Collaborators, roles, and real-time project participation.</p>
+                            <h2>👥 Team Directory</h2>
+                            <p>Active project members and roles.</p>
                         </div>
                     </div>
 
-                    <div class="team-grid">
-                        <div class="member-card">
-                            <div class="member-avatar leader">I</div>
-                            <h4>Inamullah</h4>
-                            <span class="member-role">Team Lead & Full-Stack Architect</span>
-                            <span class="member-status online">🟢 Active Now</span>
-                        </div>
-
-                        <div class="member-card">
-                            <div class="member-avatar">U</div>
-                            <h4>Umer</h4>
-                            <span class="member-role">Geological Analyst & Researcher</span>
-                            <span class="member-status online">🟢 Active Now</span>
-                        </div>
-
-                        <div class="member-card">
-                            <div class="member-avatar">M</div>
-                            <h4>Muhammad</h4>
-                            <span class="member-role">GIS & Spatial Data Specialist</span>
-                            <span class="member-status online">🟢 Active Now</span>
-                        </div>
-
-                        <div class="member-card">
-                            <div class="member-avatar">E</div>
-                            <h4>Ehsan</h4>
-                            <span class="member-role">Field Data Coordinator</span>
-                            <span class="member-status away">🟡 In Field</span>
+                    <div class="team-grid" id="team-members-grid">
+                        <div class="member-card" id="my-team-card">
+                            <div class="member-avatar leader" id="team-my-avatar">G</div>
+                            <h4 id="team-my-name">Guest User</h4>
+                            <span class="member-role" id="team-my-role">Visitor / Observer</span>
+                            <span class="member-status online">🟢 Online</span>
                         </div>
                     </div>
                 </section>
@@ -542,7 +440,7 @@
         </div>
     </div>
 
-    <!-- 4. ACCOUNT MODAL -->
+    <!-- 4. ACCOUNT MODAL (With Delete Account Feature) -->
     <div class="modal-overlay" id="account-modal" style="display: none;">
         <div class="modal-card">
             <div class="modal-header">
@@ -555,7 +453,7 @@
                     <div class="avatar-large" id="modal-avatar">I</div>
                     <h2 class="profile-name" id="modal-username">Inamullah</h2>
                     <p class="profile-email" id="modal-email">inam@gmail.com</p>
-                    <span class="badge-role" style="margin-top: 0.5rem; display: inline-block;">Team Lead & Architect</span>
+                    <span class="badge-role" style="margin-top: 0.5rem; display: inline-block;">Team Member</span>
                 </div>
 
                 <div class="profile-stats">
@@ -576,6 +474,11 @@
                 <div class="modal-actions">
                     <button class="verify-token-btn" id="verify-token-btn">🛡️ Verify Token With Backend</button>
                     <button class="modal-logout-btn" id="modal-logout-btn">Log Out</button>
+                    
+                    <!-- DANGER ZONE: DELETE ACCOUNT -->
+                    <div class="danger-zone">
+                        <button class="delete-account-btn" id="delete-account-btn">🗑️ Delete Account Permanently</button>
+                    </div>
                 </div>
                 
                 <div class="api-debug-box" id="modal-api-box" style="display: none;"></div>
@@ -586,5 +489,6 @@
     <script src="app.js"></script>
 </body>
 </html>
+
 
 

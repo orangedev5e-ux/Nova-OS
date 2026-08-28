@@ -1385,16 +1385,51 @@ input:checked + .slider:before { transform: translateX(20px); }
     border-radius: var(--radius-md);
     font-weight: 700;
     cursor: pointer;
+    transition: var(--transition);
+}
+
+.verify-token-btn:hover {
+    background: rgba(37, 99, 235, 0.3);
 }
 
 .modal-logout-btn {
     padding: 0.75rem;
-    background: rgba(239, 68, 68, 0.15);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(148, 163, 184, 0.1);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
     font-weight: 700;
     cursor: pointer;
+    transition: var(--transition);
+}
+
+.modal-logout-btn:hover {
+    background: rgba(148, 163, 184, 0.2);
+    color: var(--text-main);
+}
+
+/* Danger Zone - Delete Account */
+.danger-zone {
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed rgba(239, 68, 68, 0.3);
+}
+
+.delete-account-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.delete-account-btn:hover {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #ef4444;
 }
 
 .api-debug-box {
@@ -1408,6 +1443,149 @@ input:checked + .slider:before { transform: translateX(20px); }
     max-height: 120px;
     overflow-y: auto;
 }
+
+/* ==========================================================================
+   LEFT-SIDE AUTH MODAL / DRAWER (Non-blocking & Left Docked)
+   ========================================================================== */
+.auth-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 2rem;
+    animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.auth-drawer-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 440px;
+    padding: 2rem;
+    box-shadow: var(--shadow-modal);
+    position: relative;
+    animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-40px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.login-prompt-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.login-prompt-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.header-auth-btn {
+    padding: 0.45rem 0.9rem;
+    background: rgba(37, 99, 235, 0.15);
+    color: var(--accent-cyan);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: var(--radius-md);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.header-auth-btn:hover {
+    background: var(--primary-blue);
+    color: #ffffff;
+}
+
+/* Empty State Styling for Clean First-Time Users */
+.empty-box-placeholder {
+    padding: 3rem 1.5rem;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    background: var(--bg-card-alt);
+    margin-top: 1rem;
+}
+
+.empty-box-placeholder .empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.empty-box-placeholder h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.35rem;
+}
+
+.empty-box-placeholder p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.empty-state-notice {
+    padding: 1.25rem;
+    background: var(--bg-card-alt);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--border);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.empty-chat-state {
+    text-align: center;
+    padding: 4rem 1.5rem;
+    color: var(--text-muted);
+}
+
+.empty-chat-state span {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .auth-modal-overlay {
+        padding: 1rem;
+        justify-content: center;
+    }
+}
+
 
 /* ==========================================================================
    10. MOBILE RESPONSIVENESS BREAKPOINTS
