@@ -22,163 +22,158 @@ app.use(express.static('../public'));
 // Read MongoDB URI from .env or fallback
 const uri = process.env.MONGO_URI || "mongodb+srv://simpleUsername:abcL5t8dFcQpZ@cluster0.gv9kwt2.mongodb.net/?appName=Cluster0";
 
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-  tls: true,
-  connectTimeoutMS: 15000,
-  serverSelectionTimeoutMS: 15000
-});
+const client = new MongoClient(uri);
 
 let db;
 let usersCollection;
 
-// Connect to MongoDB in background with retry
-async function connectDB() {
-  try {
+async function getCollection() {
+  if (!usersCollection) {
     await client.connect();
     db = client.db('User_DataBase');
     usersCollection = db.collection('Users');
     console.log("Connected to MongoDB Atlas successfully!");
-  } catch (err) {
-    console.error("MongoDB Atlas connection notice:", err.message);
   }
+  return usersCollection;
 }
-connectDB();
+getCollection().catch(err => console.error("Initial Atlas connect error:", err.message));
 
+// 1. SIGN UP (REGISTER) ROUTE
+app.post('/api/submit', async (req, res) => {
+  try {
+    const { userName, userEmail, userPassword } = req.body;
 
-    // 1. SIGN UP (REGISTER) ROUTE
-    app.post('/api/submit', async (req, res) => {
-      try {
-        const { userName, userEmail, userPassword } = req.body;
+    if (!userName || !userEmail || !userPassword) {
+      return res.status(400).json({ error: "Please fill in all fields." });
+    }
 
-        if (!userName || !userEmail || !userPassword) {
-          return res.status(400).json({ error: "Please fill in all fields." });
-        }
+    const collection = await getCollection();
 
-        // Check if user already exists
-        const existingUser = await usersCollection.findOne({ userEmail: userEmail.toLowerCase() });
-        if (existingUser) {
-          return res.status(400).json({ error: "This email is already registered. Please log in." });
-        }
+    // Check if user already exists
+    const existingUser = await collection.findOne({ userEmail: userEmail.toLowerCase().trim() });
+    if (existingUser) {
+      return res.status(400).json({ error: "This email is already registered. Please log in." });
+    }
 
-        // Hash the password securely
-        const hashedPassword = await bcrypt.hash(userPassword, 10);
+    // Hash the password securely
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
 
-        const newUser = await usersCollection.insertOne({
-          userName: userName.trim(),
-          userEmail: userEmail.toLowerCase().trim(),
-          userPassword: hashedPassword,
-          createdAt: new Date()
-        });
-
-        console.log("New user registered:", userName);
-        res.status(201).json({
-          success: true,
-          message: "Account created successfully! Please log in.",
-          userId: newUser.insertedId
-        });
-      } catch (error) {
-        console.error("Sign up error:", error.message);
-        res.status(500).json({ error: error.message });
-      }
+    const newUser = await collection.insertOne({
+      userName: userName.trim(),
+      userEmail: userEmail.toLowerCase().trim(),
+      userPassword: hashedPassword,
+      createdAt: new Date()
     });
 
-    // 2. LOGIN ROUTE (Public - No authMiddleware here!)
-    app.post('/api/login', async (req, res) => {
-      try {
-        const { identifier, userPassword } = req.body;
+    console.log("New user registered:", userName);
+    res.status(201).json({
+      success: true,
+      message: "Account created successfully! Please log in.",
+      userId: newUser.insertedId
+    });
+  } catch (error) {
+    console.error("Sign up error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-        if (!identifier || !userPassword) {
-          return res.status(400).json({ error: "Please enter your username/email and password." });
-        }
+// 2. LOGIN ROUTE (Public)
+app.post('/api/login', async (req, res) => {
+  try {
+    const { identifier, userPassword } = req.body;
 
-        // Allow login using either Email or Username
-        const user = await usersCollection.findOne({
-          $or: [
-            { userEmail: identifier.toLowerCase().trim() },
-            { userName: identifier.trim() }
-          ]
-        });
+    if (!identifier || !userPassword) {
+      return res.status(400).json({ error: "Please enter your username/email and password." });
+    }
 
-        if (!user) {
-          return res.status(400).json({ error: "Incorrect email/username or password." });
-        }
+    const collection = await getCollection();
 
-        // Compare entered password with stored hash
-        const isPasswordValid = await bcrypt.compare(userPassword, user.userPassword);
-        if (!isPasswordValid) {
-          return res.status(400).json({ error: "Incorrect email/username or password." });
-        }
-
-        // Generate JWT Token
-        const token = jwt.sign(
-          { userId: user._id, userName: user.userName, userEmail: user.userEmail },
-          JWT_SECRET,
-          { expiresIn: "1d" }
-        );
-
-        res.json({
-          success: true,
-          message: "Login successful!",
-          token: token,
-          user: {
-            id: user._id,
-            userName: user.userName,
-            userEmail: user.userEmail
-          }
-        });
-      } catch (error) {
-        console.error("Login error:", error.message);
-        res.status(500).json({ error: error.message });
-      }
+    // Allow login using either Email or Username
+    const user = await collection.findOne({
+      $or: [
+        { userEmail: identifier.toLowerCase().trim() },
+        { userName: identifier.trim() }
+      ]
     });
 
-    // 3. PROTECTED ROUTE (Requires valid JWT via authMiddleware)
-    app.get('/api/profile', authMiddleware, async (req, res) => {
-      try {
-        const user = await usersCollection.findOne(
-          { _id: new ObjectId(req.user.userId) },
-          { projection: { userPassword: 0 } } // Exclude password from response
-        );
+    if (!user) {
+      return res.status(400).json({ error: "Incorrect email/username or password." });
+    }
 
-        if (!user) {
-          return res.status(404).json({ error: "User not found." });
-        }
+    // Compare entered password with stored hash
+    const isPasswordValid = await bcrypt.compare(userPassword, user.userPassword);
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: "Incorrect email/username or password." });
+    }
 
-        res.json({
-          success: true,
-          user: user
-        });
-      } catch (error) {
-        res.status(500).json({ error: error.message });
+    // Generate JWT Token
+    const token = jwt.sign(
+      { userId: user._id, userName: user.userName, userEmail: user.userEmail },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.json({
+      success: true,
+      message: "Login successful!",
+      token: token,
+      user: {
+        id: user._id,
+        userName: user.userName,
+        userEmail: user.userEmail
       }
     });
+  } catch (error) {
+    console.error("Login error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-    // 4. DELETE ACCOUNT ROUTE (Protected - Removes user from MongoDB)
-    app.delete('/api/account', authMiddleware, async (req, res) => {
-      try {
-        const result = await usersCollection.deleteOne({ _id: new ObjectId(req.user.userId) });
-        if (result.deletedCount === 0) {
-          return res.status(404).json({ error: "User account not found or already deleted." });
-        }
-        console.log(`Account deleted: ID ${req.user.userId}`);
-        res.json({
-          success: true,
-          message: "Account deleted permanently."
-        });
-      } catch (error) {
-        console.error("Delete account error:", error.message);
-        res.status(500).json({ error: error.message });
-      }
+// 3. PROTECTED ROUTE (Requires valid JWT via authMiddleware)
+app.get('/api/profile', authMiddleware, async (req, res) => {
+  try {
+    const collection = await getCollection();
+    const user = await collection.findOne(
+      { _id: new ObjectId(req.user.userId) },
+      { projection: { userPassword: 0 } }
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res.json({
+      success: true,
+      user: user
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 4. DELETE ACCOUNT ROUTE
+app.delete('/api/account', authMiddleware, async (req, res) => {
+  try {
+    const collection = await getCollection();
+    const result = await collection.deleteOne({ _id: new ObjectId(req.user.userId) });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "User account not found or already deleted." });
+    }
+    console.log(`Account deleted: ID ${req.user.userId}`);
+    res.json({
+      success: true,
+      message: "Account deleted permanently."
+    });
+  } catch (error) {
+    console.error("Delete account error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Open in browser: http://localhost:${PORT}`);
 });
+
 
 
