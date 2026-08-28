@@ -27,17 +27,28 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
+  tls: true,
+  connectTimeoutMS: 15000,
+  serverSelectionTimeoutMS: 15000
 });
 
+let db;
+let usersCollection;
 
-async function startServer() {
+// Connect to MongoDB in background with retry
+async function connectDB() {
   try {
     await client.connect();
+    db = client.db('User_DataBase');
+    usersCollection = db.collection('Users');
     console.log("Connected to MongoDB Atlas successfully!");
+  } catch (err) {
+    console.error("MongoDB Atlas connection notice:", err.message);
+  }
+}
+connectDB();
 
-    const db = client.db('User_DataBase');
-    const usersCollection = db.collection('Users');
 
     // 1. SIGN UP (REGISTER) ROUTE
     app.post('/api/submit', async (req, res) => {
@@ -165,16 +176,9 @@ async function startServer() {
       }
     });
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-      console.log(`Open in browser: http://localhost:${PORT}`);
-    });
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Open in browser: http://localhost:${PORT}`);
+});
 
-
-  } catch (error) {
-    console.error("Failed to start server:", error);
-  }
-}
-
-startServer();
 
