@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraForge | Team Workspace</title>
+    <title>Nova | Personal Workspace OS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
 </head>
 <body>
 
-    <!-- 1. LEFT-SIDE SLIDE-IN / POPUP AUTH MODAL (Not blocking main UI) -->
+    <!-- 1. LEFT-SIDE SLIDE-IN POPUP AUTH MODAL -->
     <div class="auth-modal-overlay" id="auth-modal" style="display: none;">
         <div class="auth-drawer-card">
             <div class="drawer-header">
-                <div class="brand-badge">⚡ TerraForge Auth</div>
+                <div class="brand-badge">⚡ Nova OS Cloud</div>
                 <button class="close-modal-btn" id="close-auth-btn">✕</button>
             </div>
             
-            <h2 id="form-title">Join Your Team</h2>
-            <p id="form-subtitle">Create an account or sign in to sync your team data.</p>
+            <h2 id="form-title">Your Personal Cloud</h2>
+            <p id="form-subtitle">Sign in or register to sync your private tasks, calendar, and notes.</p>
 
             <!-- TAB SWITCHER -->
             <div class="tabs">
@@ -32,37 +32,33 @@
             <div class="alert-box" id="alert-box" style="display: none;"></div>
 
             <form id="auth-form" autocomplete="off">
-                <!-- NAME FIELD -->
                 <div class="form-group" id="name-group">
-                    <label for="name-input">Full Name</label>
+                    <label for="name-input">Your Name</label>
                     <input type="text" id="name-input" placeholder="e.g. Inamullah" required>
                 </div>
 
-                <!-- EMAIL / USERNAME FIELD -->
                 <div class="form-group" id="email-group">
                     <label id="email-label" for="email-input">Email Address</label>
                     <input type="text" id="email-input" placeholder="name@example.com" required>
                 </div>
 
-                <!-- PASSWORD FIELD -->
                 <div class="form-group" id="password-group">
                     <label for="password-input">Password</label>
                     <input type="password" id="password-input" placeholder="••••••••" required>
                 </div>
 
-                <!-- SUBMIT BUTTON -->
                 <button type="submit" class="submit-btn" id="submit-btn">
                     <span id="btn-text">Create Account</span>
                 </button>
             </form>
 
             <div class="card-footer">
-                <p id="toggle-prompt">Already on the team? <a href="#" id="toggle-link">Log In here</a></p>
+                <p id="toggle-prompt">Already registered? <a href="#" id="toggle-link">Log In here</a></p>
             </div>
         </div>
     </div>
 
-    <!-- 2. MAIN APPLICATION WORKSPACE (Accessible Directly by Everyone) -->
+    <!-- 2. MAIN APPLICATION WORKSPACE -->
     <div class="app-container" id="app-section">
         
         <!-- MOBILE OVERLAY BACKDROP -->
@@ -70,260 +66,256 @@
 
         <!-- STATIC / COLLAPSIBLE LEFT SIDEBAR -->
         <aside class="sidebar" id="app-sidebar">
-            <!-- Top Brand Header -->
+            <!-- Brand Header -->
             <div class="sidebar-brand">
                 <div class="logo-icon">💠</div>
                 <div class="brand-info">
-                    <span class="brand-title">TerraForge</span>
-                    <span class="brand-tag">Team Workspace</span>
+                    <span class="brand-title">NOVA</span>
+                    <span class="brand-tag">Personal OS</span>
                 </div>
                 <button class="mobile-close-sidebar" id="close-sidebar-btn">✕</button>
             </div>
 
-            <!-- Team / Project Quick Selector -->
+            <!-- Mode / User Pill -->
             <div class="team-badge-pill">
                 <span class="team-indicator"></span>
-                <span class="team-name" id="current-team-name">Workspace Portal</span>
+                <span class="team-name" id="current-user-status">Personal Space</span>
             </div>
 
             <!-- Navigation Links -->
             <nav class="sidebar-nav">
-                <div class="nav-category">WORKSPACE MODULES</div>
+                <div class="nav-category">WORKSPACE</div>
                 
                 <a href="#" class="nav-item active" data-view="dashboard">
                     <span class="nav-icon">📊</span>
-                    <span>Overview</span>
+                    <span>Daily Overview</span>
                 </a>
 
-                <a href="#" class="nav-item" data-view="chat">
-                    <span class="nav-icon">💬</span>
-                    <span>Team Chat</span>
-                    <span class="nav-badge" id="unread-chat-count">Live</span>
+                <a href="#" class="nav-item" data-view="tasks">
+                    <span class="nav-icon">📋</span>
+                    <span>My Tasks</span>
+                    <span class="nav-badge" id="tasks-badge">0</span>
+                </a>
+
+                <a href="#" class="nav-item" data-view="calendar">
+                    <span class="nav-icon">📅</span>
+                    <span>Calendar & Schedule</span>
+                    <span class="nav-badge" id="calendar-badge">Today</span>
                 </a>
 
                 <a href="#" class="nav-item" data-view="documents">
                     <span class="nav-icon">📁</span>
-                    <span>Documents & Files</span>
-                    <span class="nav-badge" id="docs-count-badge">0</span>
+                    <span>Document Studio</span>
+                    <span class="nav-badge" id="docs-badge">0</span>
                 </a>
 
-                <a href="#" class="nav-item" data-view="plans">
-                    <span class="nav-icon">📋</span>
-                    <span>Project Plans & Tasks</span>
-                    <span class="nav-badge" id="tasks-count-badge">0</span>
-                </a>
-
-                <a href="#" class="nav-item" data-view="team">
-                    <span class="nav-icon">👥</span>
-                    <span>Team Members</span>
+                <a href="#" class="nav-item" data-view="chat">
+                    <span class="nav-icon">💬</span>
+                    <span>AI Assistant & Chat</span>
+                    <span class="nav-badge live-tag">Active</span>
                 </a>
             </nav>
 
-            <!-- Bottom Actions (Settings & Dynamic Account / Sign In) -->
+            <!-- Bottom Actions -->
             <div class="sidebar-footer">
                 <button class="footer-btn" id="settings-btn">
                     <span class="nav-icon">⚙️</span>
                     <span>Settings & Display</span>
                 </button>
 
-                <!-- 1. GUEST MODE BUTTON (Shown when NOT logged in) -->
+                <!-- Guest Button -->
                 <button class="login-prompt-btn" id="open-auth-btn">
                     <span class="nav-icon">🔑</span>
-                    <span>Sign In / Create Account</span>
+                    <span>Sign In / Sync Data</span>
                 </button>
 
-                <!-- 2. LOGGED-IN USER PILL (Shown when logged in) -->
+                <!-- Logged In User Pill -->
                 <div class="account-pill" id="account-btn" style="display: none;">
-                    <div class="avatar-small" id="sidebar-avatar">G</div>
+                    <div class="avatar-small" id="sidebar-avatar">I</div>
                     <div class="account-details">
-                        <span class="account-name" id="sidebar-username">Guest User</span>
-                        <span class="account-status" id="sidebar-role">Online</span>
+                        <span class="account-name" id="sidebar-username">Inamullah</span>
+                        <span class="account-status" id="sidebar-role">Cloud Active</span>
                     </div>
                     <span class="chevron">›</span>
                 </div>
             </div>
         </aside>
 
-        <!-- RIGHT MAIN WORKSPACE -->
+        <!-- MAIN WORKSPACE -->
         <main class="workspace">
             <!-- Top App Bar -->
             <header class="workspace-header">
                 <div class="header-left">
                     <button class="hamburger-btn" id="hamburger-btn" aria-label="Open Menu">☰</button>
                     <div>
-                        <h1 class="page-title" id="workspace-title">Team Overview</h1>
-                        <p class="page-subtitle" id="workspace-subtitle">Welcome to your collaborative team operations center.</p>
+                        <h1 class="page-title" id="workspace-title">Daily Overview</h1>
+                        <p class="page-subtitle" id="workspace-subtitle">Your personal productivity and planning dashboard.</p>
                     </div>
                 </div>
 
                 <div class="header-right">
+                    <div class="live-clock" id="live-clock">12:00 PM</div>
                     <button class="theme-toggle-btn" id="quick-theme-btn" title="Toggle Dark/Light Mode">🌙</button>
                     <button class="header-auth-btn" id="header-auth-btn">🔑 Sign In</button>
-                    <div class="live-pill">
-                        <span class="pulse-dot"></span>
-                        <span class="hide-mobile">MongoDB Atlas Live</span>
-                        <span class="show-mobile">Online</span>
-                    </div>
                 </div>
             </header>
 
-            <!-- Dynamic Workspace Content Views -->
+            <!-- Dynamic Views Container -->
             <div class="workspace-content" id="workspace-container">
                 
-                <!-- VIEW 1: OVERVIEW / DASHBOARD -->
+                <!-- VIEW 1: DAILY OVERVIEW -->
                 <section class="view-panel active" id="view-dashboard">
+                    <!-- Hero Focus Card -->
                     <div class="welcome-banner">
                         <div class="banner-text">
-                            <h2 id="hero-greeting">Welcome to TerraForge! 👋</h2>
-                            <p id="hero-subtext">Sign in to start organizing your team discussions, custom documents, and sprint milestones.</p>
+                            <div class="date-badge" id="current-date-badge">Friday, August 28</div>
+                            <h2 id="hero-greeting">Welcome to Nova! 👋</h2>
+                            <p id="hero-subtext">Manage your daily tasks, schedule deadlines on the calendar, and write notes in your personal workspace.</p>
                         </div>
-                        <div class="banner-quick-stats">
-                            <div class="q-stat">
-                                <span class="q-val" id="stat-docs-count">0</span>
-                                <span class="q-label">My Documents</span>
+                        
+                        <!-- Progress Card -->
+                        <div class="progress-ring-card">
+                            <div class="progress-info">
+                                <span class="progress-val" id="progress-percent">0%</span>
+                                <span class="progress-label">Tasks Completed</span>
                             </div>
-                            <div class="q-stat">
-                                <span class="q-val" id="stat-tasks-count">0</span>
-                                <span class="q-label">My Tasks</span>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" id="progress-fill" style="width: 0%;"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Team Quick Actions -->
+                    <!-- Quick Metric Counters -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon blue">📋</div>
+                            <div class="metric-details">
+                                <span class="metric-number" id="stat-total-tasks">0</span>
+                                <span class="metric-name">Active Tasks</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon red">🔴</div>
+                            <div class="metric-details">
+                                <span class="metric-number" id="stat-high-priority">0</span>
+                                <span class="metric-name">High Priority</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon green">✅</div>
+                            <div class="metric-details">
+                                <span class="metric-number" id="stat-done-tasks">0</span>
+                                <span class="metric-name">Completed</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon cyan">📁</div>
+                            <div class="metric-details">
+                                <span class="metric-number" id="stat-total-docs">0</span>
+                                <span class="metric-name">Saved Notes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Shortcuts -->
                     <div class="quick-action-bar">
-                        <button class="action-card-btn" id="btn-jump-chat">
-                            <span class="act-icon">💬</span>
+                        <button class="action-card-btn" id="btn-jump-tasks">
+                            <span class="act-icon">➕</span>
                             <div>
-                                <strong>Team Discussions</strong>
-                                <p>Send messages & announcements</p>
+                                <strong>Manage Tasks</strong>
+                                <p>Create, prioritize & track todos</p>
+                            </div>
+                        </button>
+                        <button class="action-card-btn" id="btn-jump-cal">
+                            <span class="act-icon">📅</span>
+                            <div>
+                                <strong>Open Calendar</strong>
+                                <p>View upcoming deadlines & dates</p>
                             </div>
                         </button>
                         <button class="action-card-btn" id="btn-jump-docs">
-                            <span class="act-icon">📄</span>
+                            <span class="act-icon">📝</span>
                             <div>
-                                <strong>Documents Repository</strong>
-                                <p>Manage notes, PDFs, and data logs</p>
+                                <strong>Document Studio</strong>
+                                <p>Draft notes & geological research</p>
                             </div>
                         </button>
-                        <button class="action-card-btn" id="btn-jump-plans">
-                            <span class="act-icon">🚀</span>
+                        <button class="action-card-btn" id="btn-jump-chat">
+                            <span class="act-icon">💬</span>
                             <div>
-                                <strong>Sprint Tasks & Board</strong>
-                                <p>Track project progress</p>
+                                <strong>AI Assistant</strong>
+                                <p>Chat with your personal assistant</p>
                             </div>
                         </button>
                     </div>
 
-                    <!-- Clean Activity Feed -->
+                    <!-- Today's Upcoming Deadlines -->
                     <div class="panel-card">
                         <div class="card-header">
-                            <h3>🔥 Team Activity Stream</h3>
-                            <span class="badge-blue">Live Status</span>
+                            <h3>⚡ Priority Deadlines & Focus Items</h3>
+                            <button class="text-action-btn" id="btn-view-all-tasks">View All Tasks →</button>
                         </div>
-                        <div class="activity-list" id="activity-feed">
-                            <div class="empty-state-notice" id="activity-empty-notice">
-                                <p>👋 Welcome! Your live workspace is initialized and ready. Create your first document or task to see activity updates here.</p>
+                        <div class="overview-tasks-list" id="overview-task-items">
+                            <div class="empty-state-notice" id="overview-empty-notice">
+                                <p>No high-priority tasks pending. Click "Manage Tasks" above to add your goals.</p>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- VIEW 2: TEAM CHAT -->
-                <section class="view-panel" id="view-chat">
-                    <div class="chat-container">
-                        <div class="chat-header">
-                            <div class="chat-channel-info">
-                                <h3># general-discussion</h3>
-                                <p>Public channel for team communications and live discussions</p>
-                            </div>
-                            <div class="channel-members" id="chat-members-count">👥 Active Channel</div>
-                        </div>
-
-                        <!-- Chat Messages Stream -->
-                        <div class="chat-messages" id="chat-messages-box">
-                            <div class="empty-chat-state" id="empty-chat-state">
-                                <span>💬</span>
-                                <p>No messages yet in this channel. Send the first message below!</p>
-                            </div>
-                        </div>
-
-                        <!-- Chat Input Box -->
-                        <form class="chat-input-area" id="chat-form">
-                            <input type="text" id="chat-input" placeholder="Type a message to your team..." autocomplete="off" required>
-                            <button type="submit" class="chat-send-btn">Send 🚀</button>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- VIEW 3: DOCUMENTS & FILES (Clean Null State for New Users) -->
-                <section class="view-panel" id="view-documents">
+                <!-- VIEW 2: TASK MANAGER & KANBAN -->
+                <section class="view-panel" id="view-tasks">
                     <div class="panel-header-actions">
                         <div>
-                            <h2>📁 Document Repository</h2>
-                            <p>Share, organize, and inspect project documents, reports, and notes.</p>
+                            <h2>📋 Task Management</h2>
+                            <p>Create, prioritize, schedule, and complete your personal milestones.</p>
                         </div>
-                        <button class="primary-btn" id="btn-add-doc">➕ New Document</button>
+                        <button class="primary-btn" id="btn-add-task">➕ New Task</button>
                     </div>
 
-                    <!-- Upload / New Doc Modal Form Container -->
-                    <div class="doc-upload-box" id="doc-upload-panel" style="display: none;">
-                        <h3>Add New Shared Document</h3>
-                        <form id="new-doc-form">
-                            <input type="text" id="doc-title-input" placeholder="Document Title (e.g. Geological Survey v1)" required>
-                            <textarea id="doc-desc-input" placeholder="Brief summary / notes..." rows="3" required></textarea>
-                            <div class="form-row">
-                                <select id="doc-category-select">
-                                    <option value="Research">Research & Papers</option>
-                                    <option value="Geology">Geology & Field Data</option>
-                                    <option value="Architecture">System Architecture</option>
-                                    <option value="Planning">Project Roadmap</option>
-                                </select>
-                                <button type="submit" class="submit-btn" style="width: auto;">Save to Hub</button>
-                                <button type="button" class="secondary-btn" id="cancel-doc-btn" style="width: auto;">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Documents Grid -->
-                    <div class="docs-grid" id="docs-list-container">
-                        <!-- Dynamic Docs Rendered Here -->
-                    </div>
-                    <div class="empty-box-placeholder" id="docs-empty-state">
-                        <div class="empty-icon">📄</div>
-                        <h3>No documents created yet</h3>
-                        <p>Click <strong>"➕ New Document"</strong> above to store your first project file or research notes.</p>
-                    </div>
-                </section>
-
-                <!-- VIEW 4: PROJECT PLANS & TASKS (Clean Null State for New Users) -->
-                <section class="view-panel" id="view-plans">
-                    <div class="panel-header-actions">
-                        <div>
-                            <h2>📋 Project Tasks & Roadmap</h2>
-                            <p>Track team progress across sprint phases from To-Do to Done.</p>
-                        </div>
-                        <button class="primary-btn" id="btn-add-task">➕ Add Task</button>
-                    </div>
-
-                    <!-- Quick Task Form -->
+                    <!-- Task Creation Modal / Panel -->
                     <div class="doc-upload-box" id="task-create-panel" style="display: none;">
-                        <h3>Create New Team Task</h3>
+                        <h3>Create New Task</h3>
                         <form id="new-task-form">
-                            <input type="text" id="task-title-input" placeholder="Task title..." required>
-                            <input type="text" id="task-assignee-input" placeholder="Assignee name (e.g. Inamullah)" required>
+                            <input type="text" id="task-title-input" placeholder="Task title (e.g. Complete Geological Analysis)" required>
+                            
+                            <div class="form-grid-3">
+                                <div>
+                                    <label class="input-sublabel">Priority</label>
+                                    <select id="task-priority-select">
+                                        <option value="High">🔴 High Priority</option>
+                                        <option value="Medium" selected>🟡 Medium Priority</option>
+                                        <option value="Low">🟢 Low Priority</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="input-sublabel">Due Date</label>
+                                    <input type="date" id="task-date-input" required>
+                                </div>
+                                <div>
+                                    <label class="input-sublabel">Category</label>
+                                    <select id="task-category-select">
+                                        <option value="Work">💼 Work / Project</option>
+                                        <option value="Study">📚 Study / Research</option>
+                                        <option value="Geology">🌍 Geology</option>
+                                        <option value="Personal">🌟 Personal</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <textarea id="task-notes-input" placeholder="Optional notes or sub-tasks..." rows="2"></textarea>
+
                             <div class="form-row">
-                                <select id="task-priority-select">
-                                    <option value="High">Priority: High 🔴</option>
-                                    <option value="Medium" selected>Priority: Medium 🟡</option>
-                                    <option value="Low">Priority: Low 🟢</option>
-                                </select>
-                                <button type="submit" class="submit-btn" style="width: auto;">Add to Board</button>
+                                <button type="submit" class="submit-btn" style="width: auto;">Save Task</button>
                                 <button type="button" class="secondary-btn" id="cancel-task-btn" style="width: auto;">Cancel</button>
                             </div>
                         </form>
                     </div>
 
-                    <!-- Kanban Board -->
+                    <!-- Kanban Columns -->
                     <div class="kanban-board">
                         <!-- Column 1: To Do -->
                         <div class="kanban-col">
@@ -333,7 +325,7 @@
                                 <span class="count-pill" id="todo-count">0</span>
                             </div>
                             <div class="task-list" id="col-todo">
-                                <!-- Dynamically added tasks -->
+                                <!-- Dynamic items -->
                             </div>
                         </div>
 
@@ -345,7 +337,7 @@
                                 <span class="count-pill" id="prog-count">0</span>
                             </div>
                             <div class="task-list" id="col-inprogress">
-                                <!-- Dynamically added tasks -->
+                                <!-- Dynamic items -->
                             </div>
                         </div>
 
@@ -357,28 +349,143 @@
                                 <span class="count-pill" id="done-count">0</span>
                             </div>
                             <div class="task-list" id="col-done">
-                                <!-- Dynamically added tasks -->
+                                <!-- Dynamic items -->
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- VIEW 5: TEAM MEMBERS -->
-                <section class="view-panel" id="view-team">
-                    <div class="panel-header-actions">
-                        <div>
-                            <h2>👥 Team Directory</h2>
-                            <p>Active project members and roles.</p>
+                <!-- VIEW 3: INTERACTIVE CALENDAR -->
+                <section class="view-panel" id="view-calendar">
+                    <div class="calendar-layout">
+                        <!-- Left Calendar Grid -->
+                        <div class="calendar-main-card">
+                            <div class="calendar-header-bar">
+                                <div class="cal-title-group">
+                                    <h2 id="calendar-month-year">August 2026</h2>
+                                    <button class="cal-today-btn" id="cal-today-btn">Today</button>
+                                </div>
+                                <div class="cal-nav-buttons">
+                                    <button class="cal-nav-btn" id="cal-prev-btn" title="Previous Month">‹</button>
+                                    <button class="cal-nav-btn" id="cal-next-btn" title="Next Month">›</button>
+                                </div>
+                            </div>
+
+                            <!-- Day Headers -->
+                            <div class="calendar-weekdays">
+                                <span>Mon</span>
+                                <span>Tue</span>
+                                <span>Wed</span>
+                                <span>Thu</span>
+                                <span>Fri</span>
+                                <span>Sat</span>
+                                <span>Sun</span>
+                            </div>
+
+                            <!-- Calendar 35/42 Days Grid -->
+                            <div class="calendar-days-grid" id="calendar-days-grid">
+                                <!-- Generated via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Right Selected Day Inspector -->
+                        <div class="calendar-side-panel">
+                            <div class="side-panel-header">
+                                <h3 id="cal-selected-date-title">Tasks for Selected Date</h3>
+                                <span class="selected-day-badge" id="cal-selected-day-badge">Today</span>
+                            </div>
+
+                            <div class="cal-day-tasks-list" id="cal-day-tasks-list">
+                                <!-- Dynamic tasks for chosen date -->
+                            </div>
+
+                            <button class="primary-btn" id="cal-quick-add-task-btn" style="margin-top: auto;">➕ Add Task for this Date</button>
                         </div>
                     </div>
+                </section>
 
-                    <div class="team-grid" id="team-members-grid">
-                        <div class="member-card" id="my-team-card">
-                            <div class="member-avatar leader" id="team-my-avatar">G</div>
-                            <h4 id="team-my-name">Guest User</h4>
-                            <span class="member-role" id="team-my-role">Visitor / Observer</span>
-                            <span class="member-status online">🟢 Online</span>
+                <!-- VIEW 4: DOCUMENT STUDIO -->
+                <section class="view-panel" id="view-documents">
+                    <div class="panel-header-actions">
+                        <div>
+                            <h2>📁 Document & Research Studio</h2>
+                            <p>Private vault for technical notes, geological drafts, and project specs.</p>
                         </div>
+                        <button class="primary-btn" id="btn-add-doc">➕ New Document</button>
+                    </div>
+
+                    <!-- New Doc Creator -->
+                    <div class="doc-upload-box" id="doc-upload-panel" style="display: none;">
+                        <h3>Create Document / Note</h3>
+                        <form id="new-doc-form">
+                            <input type="text" id="doc-title-input" placeholder="Title (e.g. Stratigraphy & Fault Line Survey)" required>
+                            
+                            <div class="form-row">
+                                <select id="doc-category-select">
+                                    <option value="Geology">🌍 Geology & Field Data</option>
+                                    <option value="Research">📚 Research & Papers</option>
+                                    <option value="Architecture">💻 Code & Architecture</option>
+                                    <option value="Notes">📝 Daily Notes</option>
+                                </select>
+                            </div>
+
+                            <textarea id="doc-desc-input" placeholder="Write your full note, markdown or observations here..." rows="6" required></textarea>
+
+                            <div class="form-row">
+                                <button type="submit" class="submit-btn" style="width: auto;">Save to Vault</button>
+                                <button type="button" class="secondary-btn" id="cancel-doc-btn" style="width: auto;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Documents Grid -->
+                    <div class="docs-grid" id="docs-list-container">
+                        <!-- Dynamic Notes -->
+                    </div>
+                    <div class="empty-box-placeholder" id="docs-empty-state">
+                        <div class="empty-icon">📝</div>
+                        <h3>Your Document Studio is Empty</h3>
+                        <p>Click <strong>"➕ New Document"</strong> above to write your first research notes, code drafts, or study summaries.</p>
+                    </div>
+                </section>
+
+                <!-- VIEW 5: CHAT & AI ASSISTANT FRONTEND -->
+                <section class="view-panel" id="view-chat">
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <div class="chat-channel-info">
+                                <h3>💬 Nova Personal Assistant</h3>
+                                <p>Ready for your custom backend chat integration & AI queries</p>
+                            </div>
+                            <button class="text-action-btn" id="clear-chat-btn">Clear History</button>
+                        </div>
+
+                        <!-- Prompt Suggestions -->
+                        <div class="prompt-chips-bar">
+                            <button class="chip-btn" data-prompt="Summarize my pending tasks for today">📋 Summarize today's tasks</button>
+                            <button class="chip-btn" data-prompt="Draft a geological field report template">🌍 Draft geological template</button>
+                            <button class="chip-btn" data-prompt="Help me organize my project milestones">🚀 Plan project roadmap</button>
+                        </div>
+
+                        <!-- Messages Box -->
+                        <div class="chat-messages" id="chat-messages-box">
+                            <div class="message-group incoming">
+                                <div class="msg-avatar">N</div>
+                                <div class="msg-content">
+                                    <div class="msg-meta">
+                                        <span class="msg-sender">Nova Assistant</span>
+                                        <span class="msg-timestamp">Ready</span>
+                                    </div>
+                                    <div class="msg-bubble">Hello Inamullah! I am your personal workspace assistant. The frontend interface is fully wired and ready for you to attach your custom Python/Node chat backend whenever you're ready! How can I assist you right now?</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Input Box -->
+                        <form class="chat-input-area" id="chat-form">
+                            <input type="text" id="chat-input" placeholder="Type a message or question..." autocomplete="off" required>
+                            <button type="submit" class="chat-send-btn">Send 🚀</button>
+                        </form>
                     </div>
                 </section>
 
@@ -387,11 +494,33 @@
 
     </div>
 
-    <!-- 3. SETTINGS & DISPLAY MODAL -->
+    <!-- 3. DOCUMENT INSPECTION / READER MODAL -->
+    <div class="modal-overlay" id="doc-modal" style="display: none;">
+        <div class="modal-card doc-reader-card">
+            <div class="modal-header">
+                <div>
+                    <span class="doc-badge" id="modal-doc-tag">Geology</span>
+                    <h3 id="modal-doc-title" style="margin-top: 0.25rem;">Document Title</h3>
+                </div>
+                <button class="close-modal-btn" id="close-doc-modal-btn">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="doc-reader-body" id="modal-doc-content">
+                    Document content goes here...
+                </div>
+                <div class="doc-reader-footer">
+                    <span id="modal-doc-meta">Created on: Today</span>
+                    <button class="secondary-btn" id="modal-delete-doc-btn" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3);">🗑️ Delete Document</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. SETTINGS MODAL -->
     <div class="modal-overlay" id="settings-modal" style="display: none;">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>⚙️ Studio Settings & Display</h3>
+                <h3>⚙️ Display & OS Settings</h3>
                 <button class="close-modal-btn" id="close-settings-btn">✕</button>
             </div>
             
@@ -400,7 +529,7 @@
                 <div class="setting-item">
                     <div class="setting-text">
                         <strong>Color Theme</strong>
-                        <p>Switch between Dark and Light mode</p>
+                        <p>Switch between Dark Mode and Light Mode</p>
                     </div>
                     <div class="theme-switch-group">
                         <button class="theme-btn active" data-theme-val="dark">🌙 Dark</button>
@@ -421,18 +550,6 @@
                     </select>
                 </div>
 
-                <!-- Team Notifications -->
-                <div class="setting-item">
-                    <div class="setting-text">
-                        <strong>Team Chat Alerts</strong>
-                        <p>Show notifications for unread messages</p>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="notify-toggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
                 <div class="modal-actions">
                     <button class="primary-btn" id="save-settings-btn">Save Preferences</button>
                 </div>
@@ -440,11 +557,11 @@
         </div>
     </div>
 
-    <!-- 4. ACCOUNT MODAL (With Delete Account Feature) -->
+    <!-- 5. ACCOUNT MODAL -->
     <div class="modal-overlay" id="account-modal" style="display: none;">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>👤 Team Profile</h3>
+                <h3>👤 Personal Account</h3>
                 <button class="close-modal-btn" id="close-account-btn">✕</button>
             </div>
             
@@ -453,21 +570,21 @@
                     <div class="avatar-large" id="modal-avatar">I</div>
                     <h2 class="profile-name" id="modal-username">Inamullah</h2>
                     <p class="profile-email" id="modal-email">inam@gmail.com</p>
-                    <span class="badge-role" style="margin-top: 0.5rem; display: inline-block;">Team Member</span>
+                    <span class="badge-role" style="margin-top: 0.5rem; display: inline-block;">Personal Workspace Active</span>
                 </div>
 
                 <div class="profile-stats">
                     <div class="stat-box">
-                        <span class="stat-title">Database</span>
+                        <span class="stat-title">Storage</span>
                         <span class="stat-value">MongoDB Atlas</span>
                     </div>
                     <div class="stat-box">
                         <span class="stat-title">Workspace</span>
-                        <span class="stat-value">TerraForge Hub</span>
+                        <span class="stat-value">Nova OS</span>
                     </div>
                     <div class="stat-box">
-                        <span class="stat-title">Session</span>
-                        <span class="stat-value">JWT Secure</span>
+                        <span class="stat-title">Security</span>
+                        <span class="stat-value">JWT Bearer</span>
                     </div>
                 </div>
 
@@ -475,7 +592,6 @@
                     <button class="verify-token-btn" id="verify-token-btn">🛡️ Verify Token With Backend</button>
                     <button class="modal-logout-btn" id="modal-logout-btn">Log Out</button>
                     
-                    <!-- DANGER ZONE: DELETE ACCOUNT -->
                     <div class="danger-zone">
                         <button class="delete-account-btn" id="delete-account-btn">🗑️ Delete Account Permanently</button>
                     </div>
@@ -489,6 +605,7 @@
     <script src="app.js"></script>
 </body>
 </html>
+
 
 
 
