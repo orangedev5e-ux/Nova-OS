@@ -1,4 +1,4 @@
-﻿# 💠 NOVA OS | Personal Workspace 
+﻿# 💠 NOVA OS | Personal Workspace 🏳️
 
 > A modern, full-stack team collaboration platform designed for researchers, and developers. Built with **Node.js (Express)**, **MongoDB Atlas**, **JWT & bcrypt Security**, and a **Mobile-First Responsive UI** with Dark/Light mode.
 
