@@ -42,8 +42,8 @@
 
 ### 1. Clone the Repository
 \\\ash
-git clone https://github.com/your-username/terraforge-workspace.git
-cd terraforge-workspace/my-project
+git clone https://github.com/your-username/Nova-OS.git
+cd Nova-OS/my-project
 \\\
 
 ### 2. Install Dependencies
