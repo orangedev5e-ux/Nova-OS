@@ -89,4 +89,4 @@ connecDb/
 
 ## 👨‍💻 Author
 
-- **Inamullah** — *Full-Stack Developer & Geological Data Enthusiast*
+- **I** — *Full-Stack Developer| MERN Stack*
