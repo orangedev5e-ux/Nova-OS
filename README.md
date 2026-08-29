@@ -1,6 +1,6 @@
-﻿# 💠 TerraForge | Collaborative Team Workspace & Field Hub
+﻿# 💠 NOVA OS | Personal Workspace 
 
-> A modern, full-stack team collaboration platform designed for technical teams, researchers, and developers. Built with **Node.js (Express)**, **MongoDB Atlas**, **JWT & bcrypt Security**, and a **Mobile-First Responsive UI** with Dark/Light mode.
+> A modern, full-stack team collaboration platform designed for researchers, and developers. Built with **Node.js (Express)**, **MongoDB Atlas**, **JWT & bcrypt Security**, and a **Mobile-First Responsive UI** with Dark/Light mode.
 
 ---
 
@@ -20,9 +20,6 @@
 
 - **📋 Sprint Roadmap & Kanban Board:**
   - Interactive task board (*To Do, In Progress, Completed*) with live task creation and priority tags (🔴 High, 🟡 Medium, 🟢 Low).
-
-- **👥 Team Roster & Directory:**
-  - Directory of contributors with specialized roles and online/field status.
 
 - **🎨 Display & Theme Engine:**
   - Quick **Dark Mode / Light Mode** toggle with persistent storage in localStorage.
