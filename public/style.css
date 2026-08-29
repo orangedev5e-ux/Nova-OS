@@ -1584,6 +1584,50 @@ input:checked + .slider:before { transform: translateX(20px); }
         padding: 1rem;
         justify-content: center;
     }
+
+    .app-container {
+        display: block;
+        position: relative;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 80vw;
+        max-width: 300px;
+        min-width: 0;
+        transform: translateX(-105%);
+        box-shadow: 0 0 25px rgba(15, 23, 42, 0.45);
+        z-index: 60;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .mobile-close-sidebar {
+        display: block;
+    }
+
+    .hamburger-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar-backdrop {
+        display: block;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+    }
+
+    .sidebar-backdrop.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
 }
 
 
@@ -2155,4 +2199,4 @@ input:checked + .slider:before { transform: translateX(20px); }
     }
 }
 
-
+

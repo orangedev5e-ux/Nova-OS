@@ -225,7 +225,13 @@ function closeMobileSidebar() {
     appSidebar.classList.remove('open');
     sidebarBackdrop.classList.remove('active');
 }
-hamburgerBtn.addEventListener('click', openMobileSidebar);
+hamburgerBtn.addEventListener('click', () => {
+    if (appSidebar.classList.contains('open')) {
+        closeMobileSidebar();
+    } else {
+        openMobileSidebar();
+    }
+});
 closeSidebarBtn.addEventListener('click', closeMobileSidebar);
 sidebarBackdrop.addEventListener('click', closeMobileSidebar);
 quickThemeBtn.addEventListener('click', () => {
